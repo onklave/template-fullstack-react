@@ -1,0 +1,21 @@
+# The build stage does `COPY . .`, so anything not excluded here enters the web
+# image. Vite loads .env* at build time and inlines every VITE_-prefixed value
+# into the shipped bundle, so a stray .env.local would publish a local secret.
+node_modules
+dist
+coverage
+.dockerignore
+Dockerfile
+README.md
+npm-debug.log*
+*.log
+
+.env
+.env.*
+*.local
+*.pem
+*.key
+
+.git
+.gitignore
+.DS_Store

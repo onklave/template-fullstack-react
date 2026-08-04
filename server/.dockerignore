@@ -1,0 +1,19 @@
+# Anything not excluded here enters the api build context.
+node_modules
+test
+.dockerignore
+Dockerfile
+README.md
+npm-debug.log*
+*.log
+coverage
+
+# Never let a local connection string into an image layer.
+.env
+.env.*
+*.pem
+*.key
+
+.git
+.gitignore
+.DS_Store

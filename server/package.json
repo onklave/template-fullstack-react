@@ -1,0 +1,22 @@
+{
+  "name": "template-fullstack-react-api",
+  "version": "0.1.0",
+  "description": "Onklave multi-service template: the Express + PostgreSQL API service. Every route is mounted under /api.",
+  "type": "module",
+  "private": true,
+  "license": "UNLICENSED",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "lint": "node --check src/app.js && node --check src/server.js && node --check src/db.js && node --check src/items-store.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
+  }
+}

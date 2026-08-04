@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+coverage/
+
+# Environment — never commit a connection string. DATABASE_URL is injected
+# per-environment by the platform.
+.env
+.env.*
+!.env.example
+
+# Keys / certificates
+*.pem
+*.key
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor cruft
+.DS_Store

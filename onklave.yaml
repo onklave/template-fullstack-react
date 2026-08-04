@@ -1,0 +1,56 @@
+# Onklave deploy manifest.
+#
+# The platform reads THIS file — and only this file — to build and deploy the
+# repo. GitHub Actions is NOT used: nothing under .github/ is read, and a
+# workflow file cannot declare a service. There is deliberately no .github/
+# directory here.
+#
+# This repo is MULTI-SERVICE. Each entry under `services` is built and deployed
+# separately: its own image (from its own build context and Dockerfile), its own
+# Deployment, its own Service, its own env. They meet again at the ingress,
+# where both are served from ONE host and routed by `expose.path`:
+#
+#     https://<app-host>/          -> web  (React bundle, container port 3000)
+#     https://<app-host>/api/...   -> api  (Express,       container port 8080)
+#
+# Because it is one host, the browser calls the API same-origin at /api/... —
+# no CORS, no API key, no second domain. The session that loaded the page is
+# the session that authenticates the API call.
+#
+# The route prefix is NOT stripped before it reaches the container, so every
+# route the `api` service serves is mounted under /api itself — including its
+# health path (/api/healthz). Exactly one service may take `/`.
+#
+# DATABASE_URL is declared on `api` only. It is injected per-environment by the
+# platform and is never committed here. It must never be added to `web`: Vite
+# inlines build-time values into the bundle, so a secret given to the client is
+# a published secret.
+#
+# To add a third service, add another entry with its own context, port,
+# healthPath and a unique expose.path (e.g. /admin).
+version: 1
+services:
+  - name: web
+    build:
+      context: client
+      dockerfile: client/Dockerfile
+    runtime:
+      port: 3000
+      healthPath: /health
+    expose:
+      enabled: true
+      path: /
+  - name: api
+    build:
+      context: server
+      dockerfile: server/Dockerfile
+    runtime:
+      port: 8080
+      healthPath: /api/healthz
+    expose:
+      enabled: true
+      path: /api
+    env:
+      - name: DATABASE_URL
+        required: true
+        secret: true
