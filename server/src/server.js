@@ -2,6 +2,11 @@
 import { createApp } from './app.js';
 import { createPool } from './db.js';
 import { createPgStore } from './items-store.js';
+import { initOnklave } from './onklave.js';
+
+// Platform wiring first: per-environment secrets (DATABASE_URL included) land
+// in process.env and error tracking starts. A no-op off-platform (local dev).
+await initOnklave(process.env.APP_NAME || 'template-fullstack-react-api');
 
 const port = Number(process.env.PORT ?? 8080);
 

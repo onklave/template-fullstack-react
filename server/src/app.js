@@ -10,6 +10,7 @@
 // is wrong: `web` and `api` are served from the same host, so the browser's
 // calls to /api/... are same-origin and carry the session that loaded the page.
 import express from 'express';
+import { OnklaveErrors } from '@onklave/errors';
 
 import { MAX_ITEM_LENGTH } from './items-store.js';
 
@@ -61,10 +62,14 @@ export function createApp(store) {
   });
 
   // Express 5 forwards rejected promises from handlers here. Log server-side,
-  // return nothing that describes the internals.
+  // return nothing that describes the internals. The capture reports to
+  // Onklave error tracking (a no-op when not initialised).
   // eslint-disable-next-line no-unused-vars -- Express identifies error handlers by arity.
-  app.use((err, _req, res, _next) => {
+  app.use((err, req, res, _next) => {
     console.error('Unhandled error', err);
+    OnklaveErrors.captureException(err, {
+      request: { method: req.method, path: req.path, statusCode: 500 },
+    });
     res.status(500).json({ error: 'Internal Server Error' });
   });
 
