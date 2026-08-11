@@ -7,7 +7,7 @@
 # Node 24 ("Krypton") is the Active LTS line, supported until 2028-04-30.
 
 # --- Build stage: compile the React app to static files ---
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -18,7 +18,7 @@ COPY . .
 RUN npm run build
 
 # --- Runtime stage: the built files and a dependency-free server ---
-FROM node:24-alpine AS runtime
+FROM node:26-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 
